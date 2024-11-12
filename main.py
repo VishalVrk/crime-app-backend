@@ -59,6 +59,7 @@ class AnalysisResult(BaseModel):
     source: str
     timestamp: str
     reason: Optional[str] = None
+    metadata: Optional[Dict] = Field(default_factory=dict)  # Add this line
 
 # Initialize patterns
 try:
@@ -125,11 +126,11 @@ async def store_analysis_result(result: AnalysisResult):
             "is_suspicious": result.is_suspicious,  # Save the calculated flag
             "type": result.source,
             "timestamp": result.timestamp,
-            "sender": result.metadata.get("sender"),
-            "receiver": result.metadata.get("receiver"),
-            "user": result.metadata.get("user"),
-            "action": result.metadata.get("action"),
-            "filePath": result.metadata.get("filePath")
+            "sender": result.metadata.get("sender") if result.metadata else None,
+            "receiver": result.metadata.get("receiver") if result.metadata else None,
+            "user": result.metadata.get("user") if result.metadata else None,
+            "action": result.metadata.get("action") if result.metadata else None,
+            "filepath": result.metadata.get("filepath") if result.metadata else None
         }).execute()
         if response.status_code != 200:
             raise Exception(f"Failed to insert data: {response}")
@@ -141,26 +142,13 @@ async def store_analysis_result(result: AnalysisResult):
 async def analyze_text(input_data: TextInput, background_tasks: BackgroundTasks):
     try:
         timestamp = datetime.utcnow().isoformat()
-        result = text_analyzer.analyze_text(input_data.text, input_data.source, timestamp)
-        
-        # Schedule result storage in the background
-        background_tasks.add_task(store_analysis_result, result)
-        
+        result = text_analyzer.analyze_text(input_data.text, input_data.source, timestamp)      
+        background_tasks.add_task(store_analysis_result, result)        
         return result
     except Exception as e:
         logger.error(f"Error in analyze_text endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
-@app.post("/api/analyze-text", response_model=AnalysisResult)
-async def analyze_text(input_data: TextInput):
-    try:
-        timestamp = datetime.utcnow().isoformat()
-        result = text_analyzer.analyze_text(input_data.text, input_data.source, timestamp)
-        return result
-    except Exception as e:
-        logger.error(f"Error in analyze_text endpoint: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/health")
 async def health_check():
