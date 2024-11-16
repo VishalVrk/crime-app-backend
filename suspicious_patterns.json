@@ -4,17 +4,19 @@
       "data_theft": ["confidential data", "internal documents", "classified", "proprietary", "trade secret", "steal", "leak", "extract data", "download files", "copy files"],
       "threats": ["threat", "blackmail", "extortion", "ransom", "compromise", "expose", "leverage", "pressure", "force", "consequences"],
       "unauthorized_access": ["password", "credentials", "login", "access code", "backdoor", "exploit", "vulnerability", "hack", "breach", "bypass"],
-      "suspicious_behavior": ["delete evidence", "cover tracks", "hide", "conceal", "destroy", "erase", "remove traces", "off the record", "don't tell", "keep quiet"]
+      "critical_files": ["system32.dll", "customer_database.sql", "financial_data.xlsx"],
+      "suspicious_behavior": ["delete evidence", "cover tracks", "hide", "conceal", "destroy", "erase", "remove traces", "off the record", "don't tell", "keep quiet"],
+      "suspicious_operations": ["deleted", "modified", "accessed"]
   },
   "patterns": {
-      "credit_card": "\\b\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}\\b",
-      "social_security": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
-      "bank_account": "\\b\\d{8,12}\\b",
-      "routing_number": "\\b\\d{9}\\b",
-      "bitcoin_address": "\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b",
-      "suspicious_extensions": ["\\.enc$", "\\.pgp$", "\\.gpg$", "\\.crypted$", "\\.hidden$"],
-      "delete_logs": "\\bdelete\\b.*\\b(log|history|record|evidence)\\b"
-  },
+    "credit_card": "\\b\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}\\b",
+    "social_security": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+    "bank_account": "\\b\\d{8,12}\\b",
+    "routing_number": "\\b\\d{9}\\b",
+    "bitcoin_address": "\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b",
+    "suspicious_extensions": ["\\.enc$", "\\.pgp$", "\\.gpg$", "\\.crypted$", "\\.hidden$", "\\.exe$"],
+    "delete_logs": "\\bdelete\\b.*\\b(log|history|record|evidence)\\b"
+},
   "risk_scores": {
       "financial_fraud": 0.8,
       "data_theft": 0.9,
@@ -24,7 +26,9 @@
       "credit_card": 0.7,
       "social_security": 0.7,
       "suspicious_extensions": 0.6,
-      "delete_logs": 0.8
+      "delete_logs": 0.8,
+      "suspicious_operations": 0.8,
+      "critical_files": 0.9
   },
   "whitelist": {
       "domains": ["company.com", "trusted-partner.com"],
